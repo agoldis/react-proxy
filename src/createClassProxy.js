@@ -134,10 +134,11 @@ function proxyClass(Component) {
       }
 
       newComponent = NewComponent
+
       if (newComponent.prototype.isReactComponent) {
         // Set initial state for newly mounted component
         if (proxyInstance) {
-
+          Object.setPrototypeOf(proxyInstance, newComponent.prototype)
           // Get props from proxy to prevent undefined variables in render()
           const { context, props, state } = proxyInstance
 
