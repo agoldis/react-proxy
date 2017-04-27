@@ -64,9 +64,11 @@ function proxyClass(Component) {
   let ProxyComponent = new Proxy(Component, {
 
     construct(target, argumentsList, newTarget) {
-
+ 
+      // Here we create instance of a component
       const obj = Reflect.construct(Component, argumentsList);
 
+      // Create a proxy for created instance
       const tempInstance = new Proxy(obj, {
         get(target, propKey, receiver) {
 
@@ -78,8 +80,9 @@ function proxyClass(Component) {
             'context',
             'constructor',
             'selector',
-            'props'
-          ]
+            'props',
+            'didUnmount'
+          ] // Can we get those automatically?
 
           const reactLifecycleMethods = [
             'shouldComponentUpdate',
@@ -88,29 +91,19 @@ function proxyClass(Component) {
           ]
 
           if (newComponentInstance) {
-
-            if (!reactInternals.includes(propKey)) {
-
-              if (!reactLifecycleMethods.includes(propKey)) {
-
-                const originalComponentWillUpdate = newComponentInstance.componentWillUpdate
-                newComponentInstance.componentWillUpdate = function(nextProps, nextState) {
-                  proxyInstance.setState(nextState)
-                  if (originalComponentWillUpdate) {
-                    Reflect.apply(originalComponentWillUpdate, newComponentInstance, [nextProps, nextState]);
-                  }
-                }
-
-                return Reflect.get(newComponentInstance, propKey, receiver);
-              }
-
-              return Reflect.get(target, propKey, receiver);
-            } else {
+            if (reactInternals.includes(propKey) || reactLifecycleMethods.includes(propKey)) {
               return Reflect.get(target, propKey, receiver);
             }
+            const originalComponentWillUpdate = newComponentInstance.componentWillUpdate
+            newComponentInstance.componentWillUpdate = function(nextProps, nextState) {
+              proxyInstance.setState(nextState)
+              if (originalComponentWillUpdate) {
+                Reflect.apply(originalComponentWillUpdate, newComponentInstance, [nextProps, nextState]);
+              }
+            }
 
+            return Reflect.get(newComponentInstance, propKey, receiver);
           }
-
           return Reflect.get(target, propKey, receiver);
         }
       })
@@ -118,11 +111,10 @@ function proxyClass(Component) {
       if (!proxyInstance) {
         proxyInstance = tempInstance
       }
-
+      // return the proxied instance
       return tempInstance;
     },
     get(target, propKey, receiver) {
-      // if (newComponent && newComponent !== proxy) // prevents proxy cycle, but not mutal proxy cycles...
       if (newComponent) {
         return Reflect.get(newComponent, propKey, receiver);
       }
