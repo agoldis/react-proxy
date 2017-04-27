@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import createShallowRenderer from './helpers/createShallowRenderer';
 import expect from 'expect';
 import createProxy from '../src';
+import { shallow } from 'enzyme';
+
 
 function createModernFixtures() {
   class Bar extends Component {
@@ -109,7 +110,7 @@ describe('consistency', () => {
   let warnSpy;
 
   beforeEach(() => {
-    renderer = createShallowRenderer();
+    renderer = shallow;
     warnSpy = expect.spyOn(console, 'error').andCallThrough();
   });
 
