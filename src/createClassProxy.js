@@ -112,20 +112,16 @@ function proxyClass(Component) {
       return tempInstance;
     },
     get(target, propKey, receiver) {
-      // console.log(propKey)
       if (newComponent) {
-        // console.log(newComponent)
         return Reflect.get(newComponent, propKey, receiver);
       }
-      // console.log(target)
       return Reflect.get(target, propKey, receiver);
     },
     getOwnPropertyDescriptor(target, prop) {
       if (newComponent) {
         return Reflect.getOwnPropertyDescriptor(newComponent, prop);
       }
-      // console.log(target)
-      return Reflect.getOwnPropertyDescriptor(target, propKey);
+      return Reflect.getOwnPropertyDescriptor(target, prop);
     }
 
   });
