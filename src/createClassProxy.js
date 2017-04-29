@@ -1,7 +1,4 @@
 import find from 'lodash/find';
-import createPrototypeProxy from './createPrototypeProxy';
-import bindAutoBindMethods from './bindAutoBindMethods';
-import deleteUnknownAutoBindMethods from './deleteUnknownAutoBindMethods';
 import supportsProtoAssignment from './supportsProtoAssignment';
 import React from 'react';
 import { shallow } from 'enzyme';
@@ -57,7 +54,7 @@ function proxyClass(Component) {
   if (existingProxy) {
     return existingProxy;
   }
-
+  let OriginalComponent = Component
   let newComponent = null
   let newComponentInstance = null
   let proxyInstance = null
@@ -115,11 +112,22 @@ function proxyClass(Component) {
       return tempInstance;
     },
     get(target, propKey, receiver) {
+      // console.log(propKey)
       if (newComponent) {
+        // console.log(newComponent)
         return Reflect.get(newComponent, propKey, receiver);
       }
+      // console.log(target)
       return Reflect.get(target, propKey, receiver);
+    },
+    getOwnPropertyDescriptor(target, prop) {
+      if (newComponent) {
+        return Reflect.getOwnPropertyDescriptor(newComponent, prop);
+      }
+      // console.log(target)
+      return Reflect.getOwnPropertyDescriptor(target, propKey);
     }
+
   });
 
   const proxy = {
@@ -134,11 +142,14 @@ function proxyClass(Component) {
       }
 
       newComponent = NewComponent
+      OriginalComponent = newComponent
 
       if (newComponent.prototype.isReactComponent) {
         // Set initial state for newly mounted component
         if (proxyInstance) {
+
           Object.setPrototypeOf(proxyInstance, newComponent.prototype)
+  
           // Get props from proxy to prevent undefined variables in render()
           const { context, props, state } = proxyInstance
 
