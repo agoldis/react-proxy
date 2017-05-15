@@ -127,7 +127,7 @@ describe('consistency', () => {
       ({ Foo, Bar, Baz, Anon } = createFixtures());
     });
 
-    xit('[need to read about didUnmount] does not overwrite the original class', () => {
+    xit('[didUnmount doesnt work] does not overwrite the original class', () => {
       const proxy = createProxy(Bar);
       const Proxy = proxy.get();
       const barInstance = renderer.render(<Proxy />);
@@ -245,7 +245,7 @@ describe('consistency', () => {
       expect(Proxy.prototype.doNothing.name).toBe('doNothing');
     });
 
-    xit('[seems like it is for original implementation] preserves enumerability and writability of methods', () => {
+    xit('[seems like it is for original implementation, not sure it is still needed] preserves enumerability and writability of methods', () => {
       let proxy = createProxy(Bar);
       const Proxy = proxy.get();
 
