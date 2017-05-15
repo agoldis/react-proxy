@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import createReactClass from 'create-react-class';
 import expect from 'expect';
 import createProxy from '../src';
-import { shallow } from 'enzyme';
+import createShallowRenderer from './helpers/createShallowRenderer';
 
 
 function createModernFixtures() {
@@ -111,8 +111,7 @@ describe('consistency', () => {
   let warnSpy;
 
   beforeEach(() => {
-    renderer = {}
-    renderer.render = shallow;
+    renderer = createShallowRenderer(false);
     warnSpy = expect.spyOn(console, 'error').andCallThrough();
   });
 
@@ -216,7 +215,7 @@ describe('consistency', () => {
       const Proxy = proxy.get();
 
       // expect(Proxy.name).toEqual('Foo');
-      expect(Proxy.displayName).toEqual('Foo (Custom)');
+      expect(Proxy.displayName).tfoEqual('Foo (Custom)');
 
       proxy.update(Baz);
       // expect(Proxy.name).toEqual('Baz');
