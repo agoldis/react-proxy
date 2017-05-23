@@ -10,7 +10,6 @@ function createModernFixtures() {
     }
 
     getX() {
-      console.log('Base1')
       return 42;
     }
 
@@ -25,7 +24,6 @@ function createModernFixtures() {
     }
 
     getX() {
-      console.log('Base2')
       return 43;
     }
 
@@ -73,13 +71,9 @@ describe('inheritance', () => {
       const derivedProxy = createProxy(Derived);
       const DerivedProxy = derivedProxy.get();
 
-<<<<<<< Updated upstream
-      let instance = renderer.render(<DerivedProxy />);
-      expect(instance.props().children).toEqual(420);
-=======
       const wrapper = renderer.render(<DerivedProxy />);
       expect(wrapper.props().children).toEqual(420);
->>>>>>> Stashed changes
+
 
       baseProxy.update(Base2);
       wrapper.instance().forceUpdate();
