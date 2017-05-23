@@ -10,6 +10,7 @@ function createModernFixtures() {
     }
 
     getX() {
+      console.log('Base1')
       return 42;
     }
 
@@ -24,6 +25,7 @@ function createModernFixtures() {
     }
 
     getX() {
+      console.log('Base2')
       return 43;
     }
 
@@ -71,12 +73,17 @@ describe('inheritance', () => {
       const derivedProxy = createProxy(Derived);
       const DerivedProxy = derivedProxy.get();
 
+<<<<<<< Updated upstream
       let instance = renderer.render(<DerivedProxy />);
       expect(instance.props().children).toEqual(420);
+=======
+      const wrapper = renderer.render(<DerivedProxy />);
+      expect(wrapper.props().children).toEqual(420);
+>>>>>>> Stashed changes
 
       baseProxy.update(Base2);
-      instance.update();
-      expect(instance.props().children).toEqual(430);
+      wrapper.instance().forceUpdate();
+      expect(wrapper.props().children).toEqual(430);
     });
 
     it('replaces a base static method with proxied base and derived', () => {
@@ -92,12 +99,12 @@ describe('inheritance', () => {
       const derivedProxy = createProxy(Derived);
       const DerivedProxy = derivedProxy.get();
 
-      const instance = renderer.render(<DerivedProxy />);
-      expect(instance.props().children).toEqual(420);
+      const wrapper = renderer.render(<DerivedProxy />);
+      expect(wrapper.props().children).toEqual(420);
 
       baseProxy.update(Base2);
-      instance.update();
-      expect(instance.props().children).toEqual(430);
+      wrapper.instance().forceUpdate();
+      expect(wrapper.props().children).toEqual(430);
     });
 
     it('replaces a base instance method with proxied base only', () => {
@@ -110,12 +117,13 @@ describe('inheritance', () => {
         }
       }
 
-      const instance = renderer.render(<Derived />);
-      expect(instance.props().children).toEqual(420);
+      const wrapper = renderer.render(<Derived />);
+      expect(wrapper.props().children).toEqual(420);
 
       baseProxy.update(Base2);
-      instance.update();
-      expect(instance.props().children).toEqual(430);
+      wrapper.update()
+      wrapper.instance().forceUpdate();
+      expect(wrapper.props().children).toEqual(430);
     });
 
     it('replaces a base static method with proxied base only', () => {
